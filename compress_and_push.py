@@ -47,9 +47,26 @@ try:
     subprocess.run(["git", "commit", "-m", f"Add product images for {product_code}"], check=True)
     subprocess.run(["git", "push"], check=True)
     print("🚀 Зображення запушено в GitHub.")
+    
+    # Очищення input_images після пушу
+    for filename in os.listdir(input_folder):
+        file_path = os.path.join(input_folder, filename)
+        try:
+            os.remove(file_path)
+        except Exception as e:
+            print(f"⚠️ Не вдалося видалити {filename}: {e}")
+    print("🧹 Папка input_images очищена.")
+
 except subprocess.CalledProcessError:
     print("❌ Сталася помилка під час git push. Перевір доступ і репозиторій.")
 
 # Вивід результату
+links_text = ";".join(image_urls)
 print("\n📎 Прямі посилання на зображення:")
-print(";".join(image_urls))
+print(links_text)
+
+# Додавання до файлу links.txt
+with open("links.txt", "a", encoding="utf-8") as f:
+    f.write(f"{product_code};{links_text}\n")
+
+print("💾 Посилання додано в links.txt")
